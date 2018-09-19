@@ -69,7 +69,7 @@ module Fog
           options[:Source] = options.delete(:template_uri) if options[:template_uri]
           options[:source_vms].each_with_index { |_, i| options[:source_vms][i][:href] = vapp_template_vm_end_point(options[:source_vms][i].delete(:vm_id)) if options[:source_vms][i].has_key?(:vm_id) }
 
-          Fog::Generators::Compute::VcloudDirector::InstantiateVappTemplateParams.new(options).generate_xml
+          Fog::Generators::Compute::VcloudDirector::InstantiateVappTemplateParams.new(options).generate_xml(api_version)
         end
 
         def xmlns

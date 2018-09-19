@@ -10,19 +10,28 @@ module Fog
           
           include ComposeCommon
         
-          def generate_xml
-            Nokogiri::XML::Builder.new do |xml|
+          def generate_xml(api_version)
+            res = Nokogiri::XML::Builder.new do |xml|
 
               
               xml.InstantiateVAppTemplateParams((vapp_attrs)) {
                 build_vapp_instantiation_params(xml)
                 build_source_template(xml)
-                build_source_items(xml)
+                if version_at_least?('5.6', api_version)
+                  build_source_items(xml)
+                else
+                  build_source_items_legacy(xml)
+                end
               }
             end.to_xml
 
+            res
+
           end
-          
+
+          def version_at_least?(target_version, actual_version)
+            Gem::Version.new(target_version) <= Gem::Version.new(actual_version)
+          end
         end
       end
     end

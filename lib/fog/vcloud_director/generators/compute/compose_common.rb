@@ -264,6 +264,27 @@ module Fog
               xml.NetworkAdapterType(type) if type
             end
           end
+
+          def build_source_items_legacy(xml)
+            (@configuration[:source_vms] || []).each do |vm|
+              xml.SourcedVmInstantiationParams do
+                xml.Source(:name => vm[:name], :href => vm[:href])
+                xml.HardwareCustomization do
+                  if (num_cpus = vm.dig(:hardware, :cpu, :num_cores))
+                    xml.NumberOfCpus(num_cpus)
+                  end
+                  if (cores = vm.dig(:hardware, :cpu, :cores_per_socket))
+                    xml.CoresPerSocket(cores)
+                  end
+                  if (mem = vm.dig(:hardware, :memory, :quantity_mb))
+                    xml.MemorySize(mem)
+                  end
+                end
+              end
+
+              xml.AllEULAsAccepted (@configuration[:AllEULAsAccepted] || true)
+            end
+          end
         end
       end
     end
